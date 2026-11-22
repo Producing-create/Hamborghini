@@ -410,4 +410,38 @@
     filterCustomers();
   </script>
 </body>
+  <!-- شاشة تسجيل الدخول وقفل الكاشير -->
+<div id="hamborghini-login-overlay" style="position:fixed; inset:0; background:#111; z-index:99999; display:flex; align-items:center; justify-content:center; padding:16px; direction:rtl; font-family:Tahoma, Arial, sans-serif;">
+  <div style="background:#1e1e1e; border:2px solid #f5b700; border-radius:14px; padding:24px; width:100%; max-width:380px; color:#fff; text-align:center;">
+    <h2 style="margin:0 0 6px; color:#ffcc29;">Hamborghini POS</h2>
+    <p style="margin:0 0 18px; color:#bbb; font-size:13px;">سجل الدخول لفتح شاشة الكاشير</p>
+
+    <input id="loginUser" type="text" placeholder="اسم المستخدم (User)" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #444; background:#141414; color:#fff; box-sizing:border-box;">
+    <input id="loginPass" type="password" placeholder="كلمة المرور (Password)" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #444; background:#141414; color:#fff; box-sizing:border-box;">
+
+    <div id="loginError" style="color:#ff6b6b; font-size:13px; margin-bottom:10px; display:none;">بيانات الدخول غير صحيحة</div>
+
+    <button type="button" onclick="hamborghiniLogin()" style="width:100%; padding:11px; background:#f5b700; color:#111; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">دخول الكاشير</button>
+  </div>
+</div>
+
+<!-- شريط مصغر لقفل الشاشة وعرض سجل الشهور -->
+<div class="no-print" style="background:#1a1a1a; border-bottom:1px solid #333; padding:8px 16px; display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; align-items:center; direction:rtl;">
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <button type="button" onclick="toggleMonthlyModal()" style="background:#262626; color:#ffcc29; border:1px solid #f5b700; padding:6px 12px; border-radius:7px; cursor:pointer; font-weight:bold;">سجل المبيعات الشهري</button>
+    <button type="button" onclick="openChangeCredentials()" style="background:#262626; color:#fff; border:1px solid #555; padding:6px 12px; border-radius:7px; cursor:pointer;">تغيير اليوزر والباسورد</button>
+  </div>
+  <button type="button" onclick="hamborghiniLock()" style="background:#9e2a2b; color:#fff; border:none; padding:6px 14px; border-radius:7px; cursor:pointer; font-weight:bold;">قفل الكاشير 🔒</button>
+</div>
+
+<!-- نافذة عرض المبيعات الشهرية -->
+<div id="monthlySalesModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:99998; align-items:center; justify-content:center; padding:16px; direction:rtl;">
+  <div style="background:#1e1e1e; border:1px solid #f5b700; border-radius:12px; padding:18px; width:100%; max-width:520px; max-height:80vh; overflow-y:auto; color:#fff;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0; color:#ffcc29;">ذاكرة المبيعات لكل شهر</h3>
+      <button type="button" onclick="toggleMonthlyModal()" style="background:#333; color:#fff; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">إغلاق</button>
+    </div>
+    <div id="monthlySalesContent"></div>
+  </div>
+</div>
 </html>
