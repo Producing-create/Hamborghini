@@ -17,7 +17,7 @@
       font-family: Tahoma, Arial, sans-serif;
       direction: rtl;
     }
-    .print-receipt-header {
+    .print-only {
       display: none;
     }
     header {
@@ -239,16 +239,44 @@
         color: #000;
         border-bottom: 1px solid #000;
       }
-      .field input {
-        border: none;
-        background: transparent;
+      .field {
+        margin-bottom: 4px;
+      }
+      .field label {
+        display: inline;
         color: #000;
-        padding: 2px 0;
         font-weight: bold;
+      }
+      .field input {
+        display: none;
+      }
+      .print-field-val {
+        display: inline !important;
+        color: #000;
+        font-weight: normal;
+      }
+      .cart-list {
+        display: block !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      .cart-row {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px dashed #999;
+        padding: 6px 2px;
+        color: #000;
+      }
+      .cart-row small {
+        color: #222 !important;
       }
       .total-box {
         color: #000;
         border-top: 2px dashed #000;
+      }
+      .print-only {
+        display: block !important;
       }
       .print-receipt-header {
         display: flex !important;
@@ -257,7 +285,7 @@
         text-align: center;
         border-bottom: 2px dashed #000;
         padding-bottom: 10px;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
       }
       .print-brand-row {
         display: flex;
@@ -269,12 +297,10 @@
         font-size: 24px;
         font-weight: bold;
         color: #000;
-        letter-spacing: 0.5px;
       }
       .print-brand-sub {
         font-size: 12px;
         color: #222;
-        margin-top: 2px;
       }
       .print-meta {
         width: 100%;
@@ -284,6 +310,25 @@
         margin-top: 8px;
         padding-top: 6px;
         border-top: 1px solid #ccc;
+      }
+      .print-customer-box {
+        display: block !important;
+        border-bottom: 1px dashed #000;
+        padding-bottom: 8px;
+        margin-bottom: 10px;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #000;
+      }
+      .print-receipt-footer {
+        display: block !important;
+        text-align: center;
+        border-top: 2px dashed #000;
+        margin-top: 12px;
+        padding-top: 10px;
+        font-size: 12px;
+        line-height: 1.6;
+        color: #000;
       }
     }
   </style>
@@ -340,7 +385,7 @@
     </section>
 
     <section class="card">
-      <!-- ترويسة الفاتورة تظهر أعلى الإيصال عند الطباعة فقط -->
+      <!-- ترويسة المطعم واللوجو أعلى الفاتورة عند الطباعة -->
       <div class="print-receipt-header">
         <div class="print-brand-row">
           <svg width="38" height="38" viewBox="0 0 64 64" aria-hidden="true">
@@ -352,7 +397,7 @@
           </svg>
           <div>
             <div class="print-brand-name">Hamborghini</div>
-            <div class="print-brand-sub">برجر • كار</div>
+            <div class="print-brand-sub">برجر • كار — "برجر أكتر .. قوة أكتر"</div>
           </div>
         </div>
         <div class="print-meta">
@@ -361,15 +406,26 @@
         </div>
       </div>
 
+      <!-- بيانات العميل أعلى الفاتورة عند الطباعة -->
+      <div class="print-customer-box">
+        <div><strong>العميل:</strong> <span id="printCustName">عميل نقدي</span></div>
+        <div><strong>الرقم:</strong> <span id="printCustPhone">-</span></div>
+        <div><strong>العنوان:</strong> <span id="printCustAddress">-</span></div>
+      </div>
+
       <h2>الطلب الحالي</h2>
-      <div class="field">
+      <div class="field no-print">
         <label for="customerPhone">رقم هاتف العميل</label>
         <input id="customerPhone" type="tel" list="customersList" placeholder="مثال: 01012345678" oninput="lookupCustomer()" />
         <datalist id="customersList"></datalist>
       </div>
-      <div class="field">
+      <div class="field no-print">
         <label for="customerName">اسم العميل</label>
         <input id="customerName" type="text" placeholder="اسم العميل (يُحفظ تلقائياً)" />
+      </div>
+      <div class="field no-print">
+        <label for="customerAddress">عنوان العميل</label>
+        <input id="customerAddress" type="text" placeholder="عنوان التوصيل أو العميل (يُحفظ تلقائياً)" />
       </div>
 
       <ul class="cart-list" id="cartList"></ul>
@@ -383,6 +439,13 @@
       <button type="button" class="btn btn-secondary no-print" onclick="clearCart()">إفراغ السلة</button>
       <button type="button" class="btn btn-danger no-print" onclick="resetShift()">بدء وردية جديدة</button>
 
+      <!-- عنوان المطعم أسفل الفاتورة عند الطباعة -->
+      <div class="print-receipt-footer">
+        <div><strong>العنوان:</strong> دوران النادي بجوار كريب آند وافل</div>
+        <div><strong>تليفون:</strong> 01067491239</div>
+        <div>شكراً لتعاملكم مع Hamborghini</div>
+      </div>
+
       <div class="orders-section">
         <h2 style="margin-top:18px;">سجل طلبات الوردية</h2>
         <div class="orders-log" id="ordersLog"></div>
@@ -393,7 +456,7 @@
   <script>
     const MENU_CATEGORIES = [
       {
-        title: "برجر لحم (سنجل)",
+        title: "برجر لحم — سنجل",
         items: [
           { id: "beef-s-1", name: "كلاسيك تشيز برجر (سنجل)", price: 110 },
           { id: "beef-s-2", name: "سموكي تشيز برجر (سنجل)", price: 120 },
@@ -401,13 +464,11 @@
           { id: "beef-s-4", name: "رينجز تشيز برجر (سنجل)", price: 130 },
           { id: "beef-s-5", name: "ستيكس تشيز برجر (سنجل)", price: 125 },
           { id: "beef-s-6", name: "مشروم تشيز برجر (سنجل)", price: 130 },
-          { id: "beef-s-7", name: "سبايسي هلابينو تشيز برجر (سنجل)", price: 125 },
-          { id: "beef-s-8", name: "جريلد ستيك هاوس برجر (سنجل)", price: 155 },
-          { id: "beef-s-9", name: "برجر دجاج ريزو (سنجل)", price: 140 }
+          { id: "beef-s-7", name: "سبايسي هلابينو تشيز برجر (سنجل)", price: 125 }
         ]
       },
       {
-        title: "برجر لحم (دبل)",
+        title: "برجر لحم — دبل",
         items: [
           { id: "beef-d-1", name: "كلاسيك تشيز برجر (دبل)", price: 145 },
           { id: "beef-d-2", name: "سموكي تشيز برجر (دبل)", price: 155 },
@@ -415,13 +476,11 @@
           { id: "beef-d-4", name: "رينجز تشيز برجر (دبل)", price: 165 },
           { id: "beef-d-5", name: "ستيكس تشيز برجر (دبل)", price: 160 },
           { id: "beef-d-6", name: "مشروم تشيز برجر (دبل)", price: 165 },
-          { id: "beef-d-7", name: "سبايسي هلابينو تشيز برجر (دبل)", price: 160 },
-          { id: "beef-d-8", name: "جريلد ستيك هاوس برجر (دبل)", price: 120 },
-          { id: "beef-d-9", name: "برجر دجاج ريزو (دبل)", price: 160 }
+          { id: "beef-d-7", name: "سبايسي هلابينو تشيز برجر (دبل)", price: 160 }
         ]
       },
       {
-        title: "فراخ (سنجل)",
+        title: "فراخ — سنجل",
         items: [
           { id: "chk-1", name: "كريسبي تشيكن", price: 100 },
           { id: "chk-2", name: "تركي تشيكن", price: 120 },
@@ -457,7 +516,7 @@
 
     const ALL_MENU_ITEMS = MENU_CATEGORIES.flatMap((cat) => cat.items);
     const SHIFT_KEY = "hamborghini_shift_v1";
-    const CUSTOMERS_KEY = "hamborghini_customers_v1";
+    const CUSTOMERS_KEY = "hamborghini_customers_v2";
 
     let cart = [];
     let shift = loadShift();
@@ -492,14 +551,24 @@
     function renderCustomerDatalist() {
       const dl = document.getElementById("customersList");
       dl.innerHTML = Object.keys(customers)
-        .map((phone) => `<option value="${phone}">${customers[phone]}</option>`)
+        .map((phone) => {
+          const c = customers[phone];
+          const label = typeof c === "string" ? c : `${c.name || ""} ${c.address ? "- " + c.address : ""}`;
+          return `<option value="${phone}">${label}</option>`;
+        })
         .join("");
     }
 
     function lookupCustomer() {
       const phone = document.getElementById("customerPhone").value.trim();
       if (phone && customers[phone]) {
-        document.getElementById("customerName").value = customers[phone];
+        const c = customers[phone];
+        if (typeof c === "string") {
+          document.getElementById("customerName").value = c;
+        } else {
+          if (c.name) document.getElementById("customerName").value = c.name;
+          if (c.address) document.getElementById("customerAddress").value = c.address;
+        }
       }
     }
 
@@ -587,11 +656,16 @@
       const total = getCartTotal();
       const phone = document.getElementById("customerPhone").value.trim();
       const name = document.getElementById("customerName").value.trim();
+      const address = document.getElementById("customerAddress").value.trim();
       const orderNum = shift.nextOrderNumber;
       const orderTime = new Date().toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
 
-      if (phone && name) {
-        customers[phone] = name;
+      if (phone) {
+        const prev = typeof customers[phone] === "object" ? customers[phone] : { name: customers[phone] || "", address: "" };
+        customers[phone] = {
+          name: name || prev.name || "",
+          address: address || prev.address || ""
+        };
         saveCustomers();
       }
 
@@ -599,6 +673,7 @@
         orderNumber: orderNum,
         customerName: name || "عميل نقدي",
         customerPhone: phone || "-",
+        customerAddress: address || "-",
         items: cart.map((i) => ({ name: i.name, qty: i.qty, price: i.price })),
         total,
         time: orderTime
@@ -613,6 +688,9 @@
 
       document.getElementById("printOrderNo").textContent = `#${orderNum}`;
       document.getElementById("printOrderTime").textContent = orderTime;
+      document.getElementById("printCustName").textContent = order.customerName;
+      document.getElementById("printCustPhone").textContent = order.customerPhone;
+      document.getElementById("printCustAddress").textContent = order.customerAddress;
 
       renderShiftStats();
       renderOrdersLog();
@@ -621,6 +699,7 @@
       clearCart();
       document.getElementById("customerPhone").value = "";
       document.getElementById("customerName").value = "";
+      document.getElementById("customerAddress").value = "";
       renderCart();
     }
 
