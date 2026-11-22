@@ -1,8 +1,9 @@
-const CACHE_NAME = "hamborghini-pos-v1";
+const CACHE_NAME = "hamborghini-pos-v2";
 const ASSETS = [
   "./",
   "./index.html",
-  "./manifest.json"
+  "./manifest.json",
+  "./auth-monthly.js"
 ];
 
 self.addEventListener("install", (event) => {
