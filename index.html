@@ -17,6 +17,9 @@
       font-family: Tahoma, Arial, sans-serif;
       direction: rtl;
     }
+    .print-receipt-header {
+      display: none;
+    }
     header {
       background: #1d1d1d;
       border-bottom: 2px solid #f5b700;
@@ -43,11 +46,11 @@
       color: #ffcc29;
     }
     .container {
-      max-width: 1180px;
+      max-width: 1220px;
       margin: 18px auto;
       padding: 0 16px;
       display: grid;
-      grid-template-columns: 1.4fr 1fr;
+      grid-template-columns: 1.5fr 1fr;
       gap: 18px;
     }
     @media (max-width: 850px) {
@@ -68,16 +71,25 @@
       border-bottom: 1px solid #333;
       padding-bottom: 8px;
     }
+    .category-title {
+      margin: 16px 0 10px;
+      font-size: 15px;
+      color: #ffcc29;
+      font-weight: bold;
+    }
+    .category-title:first-child {
+      margin-top: 0;
+    }
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
       gap: 10px;
     }
     .item-btn {
       background: #272727;
       border: 1px solid #3e3e3e;
       border-radius: 10px;
-      padding: 12px;
+      padding: 11px;
       color: #fff;
       text-align: right;
       cursor: pointer;
@@ -93,7 +105,8 @@
     }
     .item-name {
       font-weight: bold;
-      font-size: 15px;
+      font-size: 14px;
+      line-height: 1.35;
     }
     .item-price {
       color: #4ade80;
@@ -196,17 +209,81 @@
       gap: 8px;
     }
     @media print {
-      .no-print {
+      .no-print,
+      header,
+      .menu-section,
+      .orders-section,
+      #hamborghini-login-overlay,
+      #monthlySalesModal {
         display: none !important;
       }
       body {
         background: #fff;
         color: #000;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        display: block;
+        max-width: 100%;
+        margin: 0;
+        padding: 0 8px;
       }
       .card {
         background: #fff;
         color: #000;
-        border: 1px solid #ccc;
+        border: none;
+        padding: 8px;
+      }
+      .card h2 {
+        color: #000;
+        border-bottom: 1px solid #000;
+      }
+      .field input {
+        border: none;
+        background: transparent;
+        color: #000;
+        padding: 2px 0;
+        font-weight: bold;
+      }
+      .total-box {
+        color: #000;
+        border-top: 2px dashed #000;
+      }
+      .print-receipt-header {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        border-bottom: 2px dashed #000;
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+      }
+      .print-brand-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .print-brand-name {
+        font-size: 24px;
+        font-weight: bold;
+        color: #000;
+        letter-spacing: 0.5px;
+      }
+      .print-brand-sub {
+        font-size: 12px;
+        color: #222;
+        margin-top: 2px;
+      }
+      .print-meta {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        margin-top: 8px;
+        padding-top: 6px;
+        border-top: 1px solid #ccc;
       }
     }
   </style>
@@ -257,12 +334,33 @@
   </header>
 
   <main class="container">
-    <section class="card">
+    <section class="card menu-section">
       <h2>المنيو</h2>
-      <div class="menu-grid" id="menuGrid"></div>
+      <div id="menuSections"></div>
     </section>
 
     <section class="card">
+      <!-- ترويسة الفاتورة تظهر أعلى الإيصال عند الطباعة فقط -->
+      <div class="print-receipt-header">
+        <div class="print-brand-row">
+          <svg width="38" height="38" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="32" cy="32" r="30" fill="#111" stroke="#f5b700" stroke-width="3" />
+            <path d="M16 25 C16 16, 48 16, 48 25 Z" fill="#f5b700" />
+            <rect x="14" y="28" width="36" height="6" rx="3" fill="#fff" />
+            <rect x="16" y="37" width="32" height="5" rx="2.5" fill="#f5b700" />
+            <path d="M16 45 H48 C48 51, 42 53, 32 53 C22 53, 16 51, 16 45 Z" fill="#fff" />
+          </svg>
+          <div>
+            <div class="print-brand-name">Hamborghini</div>
+            <div class="print-brand-sub">برجر • كار</div>
+          </div>
+        </div>
+        <div class="print-meta">
+          <span>رقم الفاتورة: <strong id="printOrderNo">-</strong></span>
+          <span>الوقت: <strong id="printOrderTime">-</strong></span>
+        </div>
+      </div>
+
       <h2>الطلب الحالي</h2>
       <div class="field">
         <label for="customerPhone">رقم هاتف العميل</label>
@@ -281,25 +379,83 @@
         <span id="cartTotal">0 ج</span>
       </div>
 
-      <button type="button" class="btn btn-primary" onclick="completeOrder()">تأكيد الطلب وطباعة الإيصال</button>
+      <button type="button" class="btn btn-primary no-print" onclick="completeOrder()">تأكيد الطلب وطباعة الإيصال</button>
       <button type="button" class="btn btn-secondary no-print" onclick="clearCart()">إفراغ السلة</button>
       <button type="button" class="btn btn-danger no-print" onclick="resetShift()">بدء وردية جديدة</button>
 
-      <h2 style="margin-top:18px;">سجل طلبات الوردية</h2>
-      <div class="orders-log" id="ordersLog"></div>
+      <div class="orders-section">
+        <h2 style="margin-top:18px;">سجل طلبات الوردية</h2>
+        <div class="orders-log" id="ordersLog"></div>
+      </div>
     </section>
   </main>
 
   <script>
-    const MENU_ITEMS = [
-      { id: "hb-classic", name: "همبورجيني كلاسيك", price: 95 },
-      { id: "hb-double", name: "دبل همبورجيني", price: 135 },
-      { id: "hb-cheese", name: "تشيز همبورجيني", price: 110 },
-      { id: "hb-chicken", name: "تشيكن كرانشي", price: 105 },
-      { id: "hb-fries", name: "بطاطس محمرة", price: 35 },
-      { id: "hb-cola", name: "مشروب غازي", price: 25 }
+    const MENU_CATEGORIES = [
+      {
+        title: "برجر لحم (سنجل)",
+        items: [
+          { id: "beef-s-1", name: "كلاسيك تشيز برجر (سنجل)", price: 110 },
+          { id: "beef-s-2", name: "سموكي تشيز برجر (سنجل)", price: 120 },
+          { id: "beef-s-3", name: "بيف بيكون تشيز برجر (سنجل)", price: 125 },
+          { id: "beef-s-4", name: "رينجز تشيز برجر (سنجل)", price: 130 },
+          { id: "beef-s-5", name: "ستيكس تشيز برجر (سنجل)", price: 125 },
+          { id: "beef-s-6", name: "مشروم تشيز برجر (سنجل)", price: 130 },
+          { id: "beef-s-7", name: "سبايسي هلابينو تشيز برجر (سنجل)", price: 125 },
+          { id: "beef-s-8", name: "جريلد ستيك هاوس برجر (سنجل)", price: 155 },
+          { id: "beef-s-9", name: "برجر دجاج ريزو (سنجل)", price: 140 }
+        ]
+      },
+      {
+        title: "برجر لحم (دبل)",
+        items: [
+          { id: "beef-d-1", name: "كلاسيك تشيز برجر (دبل)", price: 145 },
+          { id: "beef-d-2", name: "سموكي تشيز برجر (دبل)", price: 155 },
+          { id: "beef-d-3", name: "بيف بيكون تشيز برجر (دبل)", price: 160 },
+          { id: "beef-d-4", name: "رينجز تشيز برجر (دبل)", price: 165 },
+          { id: "beef-d-5", name: "ستيكس تشيز برجر (دبل)", price: 160 },
+          { id: "beef-d-6", name: "مشروم تشيز برجر (دبل)", price: 165 },
+          { id: "beef-d-7", name: "سبايسي هلابينو تشيز برجر (دبل)", price: 160 },
+          { id: "beef-d-8", name: "جريلد ستيك هاوس برجر (دبل)", price: 120 },
+          { id: "beef-d-9", name: "برجر دجاج ريزو (دبل)", price: 160 }
+        ]
+      },
+      {
+        title: "فراخ (سنجل)",
+        items: [
+          { id: "chk-1", name: "كريسبي تشيكن", price: 100 },
+          { id: "chk-2", name: "تركي تشيكن", price: 120 },
+          { id: "chk-3", name: "جريلد تشيكن", price: 95 },
+          { id: "chk-4", name: "زنجر تشيكن", price: 110 },
+          { id: "chk-5", name: "كوردون بلو", price: 110 }
+        ]
+      },
+      {
+        title: "المقبلات",
+        items: [
+          { id: "app-1", name: "موتزاريلا ستيكس", price: 50 },
+          { id: "app-2", name: "لوديد فرايز", price: 85 },
+          { id: "app-3", name: "بطاطس مقلية", price: 40 },
+          { id: "app-4", name: "حلقات بصل", price: 40 },
+          { id: "app-5", name: "ساندوتش بطاطس", price: 40 },
+          { id: "app-6", name: "مكس تشيز فرايز", price: 55 },
+          { id: "app-7", name: "كريسبي فرايز", price: 75 }
+        ]
+      },
+      {
+        title: "إضافات",
+        items: [
+          { id: "add-1", name: "صوص جبنة", price: 30 },
+          { id: "add-2", name: "مشروم", price: 20 },
+          { id: "add-3", name: "بيف بيكون", price: 30 },
+          { id: "add-4", name: "سموكي تركي", price: 20 },
+          { id: "add-5", name: "هلابينو", price: 15 },
+          { id: "add-6", name: "صوصات", price: 30 }
+        ]
+      }
     ];
 
+    const ALL_MENU_ITEMS = MENU_CATEGORIES.flatMap((cat) => cat.items);
     const SHIFT_KEY = "hamborghini_shift_v1";
     const CUSTOMERS_KEY = "hamborghini_customers_v1";
 
@@ -348,19 +504,28 @@
     }
 
     function renderMenu() {
-      const grid = document.getElementById("menuGrid");
-      grid.innerHTML = MENU_ITEMS.map(
-        (item) => `
-          <button type="button" class="item-btn" onclick="addToCart('${item.id}')">
-            <span class="item-name">${item.name}</span>
-            <span class="item-price">${item.price} ج</span>
-          </button>
+      const container = document.getElementById("menuSections");
+      container.innerHTML = MENU_CATEGORIES.map(
+        (cat) => `
+          <div class="category-title">${cat.title}</div>
+          <div class="menu-grid">
+            ${cat.items
+              .map(
+                (item) => `
+                  <button type="button" class="item-btn" onclick="addToCart('${item.id}')">
+                    <span class="item-name">${item.name}</span>
+                    <span class="item-price">${item.price} ج</span>
+                  </button>
+                `
+              )
+              .join("")}
+          </div>
         `
       ).join("");
     }
 
     function addToCart(itemId) {
-      const product = MENU_ITEMS.find((m) => m.id === itemId);
+      const product = ALL_MENU_ITEMS.find((m) => m.id === itemId);
       if (!product) return;
       const existing = cart.find((c) => c.id === itemId);
       if (existing) {
@@ -422,6 +587,8 @@
       const total = getCartTotal();
       const phone = document.getElementById("customerPhone").value.trim();
       const name = document.getElementById("customerName").value.trim();
+      const orderNum = shift.nextOrderNumber;
+      const orderTime = new Date().toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
 
       if (phone && name) {
         customers[phone] = name;
@@ -429,12 +596,12 @@
       }
 
       const order = {
-        orderNumber: shift.nextOrderNumber,
+        orderNumber: orderNum,
         customerName: name || "عميل نقدي",
         customerPhone: phone || "-",
         items: cart.map((i) => ({ name: i.name, qty: i.qty, price: i.price })),
         total,
-        time: new Date().toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" })
+        time: orderTime
       };
 
       shift.orders.unshift(order);
@@ -444,13 +611,17 @@
 
       if (typeof recordOrderToMonth === "function") recordOrderToMonth(total);
 
-      clearCart();
-      document.getElementById("customerPhone").value = "";
-      document.getElementById("customerName").value = "";
+      document.getElementById("printOrderNo").textContent = `#${orderNum}`;
+      document.getElementById("printOrderTime").textContent = orderTime;
 
       renderShiftStats();
       renderOrdersLog();
       window.print();
+
+      clearCart();
+      document.getElementById("customerPhone").value = "";
+      document.getElementById("customerName").value = "";
+      renderCart();
     }
 
     function resetShift() {
