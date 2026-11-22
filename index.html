@@ -1,448 +1,504 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>كاشير Hamborghini - برجر • كار</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hamborghini Cashier</title>
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#f5b700" />
   <style>
-    * { box-sizing: border-box; font-family: Tahoma, Arial, sans-serif; }
-    body { margin: 0; background: #141414; color: #fff; }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #141414;
+      color: #f5f5f5;
+      font-family: Tahoma, Arial, sans-serif;
+      direction: rtl;
+    }
     header {
-      background: linear-gradient(90deg, #1f1a0c, #3b2c08);
+      background: #1d1d1d;
       border-bottom: 2px solid #f5b700;
-      padding: 12px 16px;
-      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
     }
-    .brand h1 { margin: 0; font-size: 20px; color: #ffcc29; }
-    .brand small { color: #ddd; }
-    .top-actions button {
-      background: #262626; color: #ffcc29; border: 1px solid #f5b700;
-      padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
+    header h1 {
+      margin: 0;
+      color: #ffcc29;
+      font-size: 22px;
     }
-    .container { display: grid; grid-template-columns: 1.6fr 1.2fr; gap: 14px; padding: 14px; }
-    @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
-    .panel { background: #1e1e1e; border: 1px solid #333; border-radius: 12px; padding: 14px; }
-    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-    .tab {
-      background: #2b2b2b; color: #fff; border: none; padding: 9px 14px;
-      border-radius: 8px; cursor: pointer; font-weight: bold;
+    .shift-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 14px;
+      color: #ddd;
     }
-    .tab.active { background: #f5b700; color: #111; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 10px; }
-    .item-card {
-      background: #272727; border: 1px solid #3b3b3b; border-radius: 10px;
-      padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
+    .shift-info span strong {
+      color: #ffcc29;
     }
-    .item-name { font-weight: bold; font-size: 14px; color: #fff; }
-    .size-btns { display: flex; gap: 6px; flex-wrap: wrap; }
-    .add-btn {
-      flex: 1; background: #f5b700; color: #111; border: none; border-radius: 7px;
-      padding: 7px 6px; font-weight: bold; cursor: pointer; font-size: 12px;
+    .container {
+      max-width: 1180px;
+      margin: 18px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 18px;
     }
-    .add-btn:hover { background: #ffcf40; }
-    .order-list { max-height: 250px; overflow-y: auto; margin: 10px 0; border-top: 1px solid #333; border-bottom: 1px solid #333; padding: 8px 0; }
-    .order-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 6px 4px; border-bottom: 1px dashed #333; font-size: 13px; gap: 6px;
+    @media (max-width: 850px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
     }
-    .qty-ctrl button {
-      background: #383838; color: #fff; border: none; width: 24px; height: 24px;
-      border-radius: 5px; cursor: pointer; font-weight: bold;
+    .card {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 16px;
     }
-    .field { width: 100%; padding: 8px 10px; margin-top: 6px; border-radius: 8px; border: 1px solid #444; background: #141414; color: #fff; }
-    .summary-line { display: flex; justify-content: space-between; margin: 6px 0; font-size: 15px; }
-    .total { font-size: 19px; font-weight: bold; color: #ffcc29; }
-    .checkout-btns { display: flex; gap: 8px; margin-top: 10px; }
-    .btn-confirm { flex: 2; background: #22a04b; color: #fff; border: none; padding: 11px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    .btn-clear { flex: 1; background: #9e2a2b; color: #fff; border: none; padding: 11px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    .history-box { margin-top: 14px; background: #181818; border: 1px solid #333; border-radius: 10px; padding: 10px; font-size: 13px; display: none; }
-    .history-box.show { display: block; }
-    .customer-section { margin-top: 15px; padding-top: 15px; border-top: 1px solid #333; }
-    .customer-list { list-style: none; padding: 0; max-height: 150px; overflow-y: auto; margin-top: 10px; }
-    .customer-item { display: flex; justify-content: space-between; align-items: center; padding: 6px; background: #252525; margin-bottom: 6px; border-radius: 6px; font-size: 12px; }
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+      color: #ffcc29;
+      border-bottom: 1px solid #333;
+      padding-bottom: 8px;
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 10px;
+    }
+    .item-btn {
+      background: #272727;
+      border: 1px solid #3e3e3e;
+      border-radius: 10px;
+      padding: 12px;
+      color: #fff;
+      text-align: right;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 6px;
+      transition: border-color 0.15s, transform 0.1s;
+    }
+    .item-btn:hover {
+      border-color: #f5b700;
+      transform: translateY(-1px);
+    }
+    .item-name {
+      font-weight: bold;
+      font-size: 15px;
+    }
+    .item-price {
+      color: #4ade80;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .field {
+      margin-bottom: 10px;
+    }
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: #ccc;
+      margin-bottom: 4px;
+    }
+    .field input {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #141414;
+      color: #fff;
+      font-size: 14px;
+    }
+    .cart-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 12px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    .cart-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 6px;
+      border-bottom: 1px solid #2e2e2e;
+      font-size: 14px;
+      gap: 8px;
+    }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .qty-btn {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .total-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffcc29;
+      padding: 10px 0;
+      border-top: 2px solid #333;
+      margin-bottom: 12px;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .btn-primary {
+      background: #f5b700;
+      color: #111;
+    }
+    .btn-secondary {
+      background: #2c2c2c;
+      color: #fff;
+      border: 1px solid #555;
+    }
+    .btn-danger {
+      background: #8c1d18;
+      color: #fff;
+    }
+    .orders-log {
+      max-height: 220px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+    .order-entry {
+      padding: 8px;
+      border-bottom: 1px solid #2e2e2e;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
     @media print {
-      body { background: #fff; color: #000; }
-      header, .menu-panel, .no-print { display: none !important; }
-      .panel { border: none; background: #fff; color: #000; }
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: #fff;
+        color: #000;
+      }
+      .card {
+        background: #fff;
+        color: #000;
+        border: 1px solid #ccc;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <h1>Hamborghini — برجر • كار</h1>
-      <small>دوران النادي بجوار كريب آند وافل • 01067491239</small>
-    </div>
-    <div class="top-actions">
-      <button onclick="toggleReport()">تقفيل الوردية / السجل</button>
-      <button onclick="resetShift()">بدء وردية جديدة</button>
-    </div>
-  </header>
+  <!-- شاشة تسجيل الدخول وقفل الكاشير -->
+  <div id="hamborghini-login-overlay" style="position:fixed; inset:0; background:#111; z-index:99999; display:flex; align-items:center; justify-content:center; padding:16px; direction:rtl; font-family:Tahoma, Arial, sans-serif;">
+    <div style="background:#1e1e1e; border:2px solid #f5b700; border-radius:14px; padding:24px; width:100%; max-width:380px; color:#fff; text-align:center;">
+      <h2 style="margin:0 0 6px; color:#ffcc29;">Hamborghini POS</h2>
+      <p style="margin:0 0 18px; color:#bbb; font-size:13px;">سجل الدخول لفتح شاشة الكاشير</p>
 
-  <div class="container">
-    <div class="panel menu-panel">
-      <div class="tabs" id="tabs"></div>
-      <div class="grid" id="menuGrid"></div>
-    </div>
+      <input id="loginUser" type="text" placeholder="اسم المستخدم (User)" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #444; background:#141414; color:#fff; box-sizing:border-box;">
+      <input id="loginPass" type="password" placeholder="كلمة المرور (Password)" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #444; background:#141414; color:#fff; box-sizing:border-box;">
 
-    <div class="panel">
-      <h2 style="margin:0 0 6px; color:#ffcc29; font-size:18px;">طلب تيك أواي #<span id="orderNum">1</span></h2>
-      
-      <div class="customer-section">
-        <h4 style="margin:0 0 8px; color:#ffcc29;">بيانات العميل</h4>
-        <input id="customerName" class="field" type="text" placeholder="اسم العميل" />
-        <input id="customerPhone" class="field" type="tel" placeholder="رقم التليفون" />
-        <div style="display:flex; gap:6px; margin-top:8px;">
-          <button class="tab" style="flex:1; padding:6px;" onclick="saveCustomer()">حفظ العميل</button>
-          <button class="tab" style="flex:1; padding:6px; background:#444;" onclick="clearCustomerInputs()">مسح الخانات</button>
-        </div>
-        <input id="customerSearch" class="field" type="text" placeholder="بحث في العملاء المحفوظين..." oninput="filterCustomers()" />
-        <ul class="customer-list" id="customersList"></ul>
-      </div>
+      <div id="loginError" style="color:#ff6b6b; font-size:13px; margin-bottom:10px; display:none;">بيانات الدخول غير صحيحة</div>
 
-      <input id="customerNote" class="field no-print" type="text" maxlength="200" placeholder="ملاحظات المطبخ (مثال: بدون هلابينو)" />
-
-      <div class="order-list" id="orderList">
-        <div style="color:#aaa; text-align:center; padding:20px;">لم يتم إضافة أصناف بعد</div>
-      </div>
-
-      <div class="summary-line total">
-        <span>الإجمالي:</span>
-        <span><span id="totalAmount">0</span> ج</span>
-      </div>
-
-      <div class="no-print">
-        <input id="paidAmount" class="field" type="number" min="0" step="any" placeholder="المبلغ المدفوع من العميل (ج)" oninput="calcChange()" />
-        <div class="summary-line">
-          <span>الباقي للعميل:</span>
-          <strong><span id="changeAmount">0</span> ج</strong>
-        </div>
-      </div>
-
-      <div class="checkout-btns no-print">
-        <button class="btn-confirm" onclick="completeOrder()">تأكيد الطلب وحفظه</button>
-        <button class="btn-clear" onclick="clearOrder()">مسح الطلب</button>
-      </div>
-      <button class="tab no-print" style="width:100%; margin-top:8px;" onclick="window.print()">طباعة الفاتورة / ملخص التحضير</button>
-
-      <div class="history-box" id="reportBox"></div>
+      <button type="button" onclick="hamborghiniLogin()" style="width:100%; padding:11px; background:#f5b700; color:#111; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">دخول الكاشير</button>
     </div>
   </div>
 
+  <!-- شريط مصغر لقفل الشاشة وعرض سجل الشهور -->
+  <div class="no-print" style="background:#1a1a1a; border-bottom:1px solid #333; padding:8px 16px; display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; align-items:center; direction:rtl;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button type="button" onclick="toggleMonthlyModal()" style="background:#262626; color:#ffcc29; border:1px solid #f5b700; padding:6px 12px; border-radius:7px; cursor:pointer; font-weight:bold;">سجل المبيعات الشهري</button>
+      <button type="button" onclick="openChangeCredentials()" style="background:#262626; color:#fff; border:1px solid #555; padding:6px 12px; border-radius:7px; cursor:pointer;">تغيير اليوزر والباسورد</button>
+    </div>
+    <button type="button" onclick="hamborghiniLock()" style="background:#9e2a2b; color:#fff; border:none; padding:6px 14px; border-radius:7px; cursor:pointer; font-weight:bold;">قفل الكاشير 🔒</button>
+  </div>
+
+  <!-- نافذة عرض المبيعات الشهرية -->
+  <div id="monthlySalesModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:99998; align-items:center; justify-content:center; padding:16px; direction:rtl;">
+    <div style="background:#1e1e1e; border:1px solid #f5b700; border-radius:12px; padding:18px; width:100%; max-width:520px; max-height:80vh; overflow-y:auto; color:#fff;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="margin:0; color:#ffcc29;">ذاكرة المبيعات لكل شهر</h3>
+        <button type="button" onclick="toggleMonthlyModal()" style="background:#333; color:#fff; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">إغلاق</button>
+      </div>
+      <div id="monthlySalesContent"></div>
+    </div>
+  </div>
+
+  <header>
+    <h1>Hamborghini — كاشير الطلبات</h1>
+    <div class="shift-info">
+      <span>رقم الطلب التالي: <strong id="nextOrderNo">1</strong></span>
+      <span>طلبات الوردية: <strong id="shiftOrdersCount">0</strong></span>
+      <span>إجمالي الوردية: <strong id="shiftTotal">0</strong> ج</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>المنيو</h2>
+      <div class="menu-grid" id="menuGrid"></div>
+    </section>
+
+    <section class="card">
+      <h2>الطلب الحالي</h2>
+      <div class="field">
+        <label for="customerPhone">رقم هاتف العميل</label>
+        <input id="customerPhone" type="tel" list="customersList" placeholder="مثال: 01012345678" oninput="lookupCustomer()" />
+        <datalist id="customersList"></datalist>
+      </div>
+      <div class="field">
+        <label for="customerName">اسم العميل</label>
+        <input id="customerName" type="text" placeholder="اسم العميل (يُحفظ تلقائياً)" />
+      </div>
+
+      <ul class="cart-list" id="cartList"></ul>
+
+      <div class="total-box">
+        <span>الإجمالي</span>
+        <span id="cartTotal">0 ج</span>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="completeOrder()">تأكيد الطلب وطباعة الإيصال</button>
+      <button type="button" class="btn btn-secondary no-print" onclick="clearCart()">إفراغ السلة</button>
+      <button type="button" class="btn btn-danger no-print" onclick="resetShift()">بدء وردية جديدة</button>
+
+      <h2 style="margin-top:18px;">سجل طلبات الوردية</h2>
+      <div class="orders-log" id="ordersLog"></div>
+    </section>
+  </main>
+
   <script>
-    const MENU = {
-      "برجر لحم": [
-        { name: "كلاسيك تشيز برجر", single: 110, double: 145 },
-        { name: "سموكي تشيز برجر", single: 120, double: 155 },
-        { name: "بيف بيكون تشيز برجر", single: 125, double: 160 },
-        { name: "رينجز تشيز برجر", single: 130, double: 165 },
-        { name: "ستيكس تشيز برجر", single: 125, double: 160 },
-        { name: "مشروم تشيز برجر", single: 130, double: 165 },
-        { name: "سبايسي هلابينو تشيز برجر", single: 125, double: 160 }
-      ],
-      "فراخ": [
-        { name: "كريسبي تشيكن", single: 100 },
-        { name: "تركي تشيكن", single: 120 },
-        { name: "جريلد تشيكن", single: 95 },
-        { name: "زنجر تشيكن", single: 110 },
-        { name: "كوردون بلو", single: 110 }
-      ],
-      "المقبلات": [
-        { name: "موتزاريلا ستيكس", single: 50 },
-        { name: "لوديد فرايز", single: 85 },
-        { name: "بطاطس مقلية", single: 40 },
-        { name: "حلقات بصل", single: 40 },
-        { name: "ساندوتش بطاطس", single: 40 },
-        { name: "مكس تشيز فرايز", single: 55 },
-        { name: "كريسبي فرايز", single: 75 }
-      ],
-      "إضافات": [
-        { name: "صوص جبنة", single: 30 },
-        { name: "مشروم", single: 20 },
-        { name: "بيف بيكون", single: 30 },
-        { name: "سموكي تركي", single: 20 },
-        { name: "هلابينو", single: 15 },
-        { name: "صوصات", single: 30 }
-      ]
-    };
+    const MENU_ITEMS = [
+      { id: "hb-classic", name: "همبورجيني كلاسيك", price: 95 },
+      { id: "hb-double", name: "دبل همبورجيني", price: 135 },
+      { id: "hb-cheese", name: "تشيز همبورجيني", price: 110 },
+      { id: "hb-chicken", name: "تشيكن كرانشي", price: 105 },
+      { id: "hb-fries", name: "بطاطس محمرة", price: 35 },
+      { id: "hb-cola", name: "مشروب غازي", price: 25 }
+    ];
 
     const SHIFT_KEY = "hamborghini_shift_v1";
     const CUSTOMERS_KEY = "hamborghini_customers_v1";
 
-    function escapeHtml(str) {
-      return String(str ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-    }
+    let cart = [];
+    let shift = loadShift();
+    let customers = loadCustomers();
 
-    function loadShiftData() {
-      const fallback = { orders: [], counter: 1 };
+    function loadShift() {
       try {
         const raw = localStorage.getItem(SHIFT_KEY);
-        if (!raw) return fallback;
-        const parsed = JSON.parse(raw);
-        if (!parsed || typeof parsed !== "object") return fallback;
-        const orders = Array.isArray(parsed.orders) ? parsed.orders : [];
-        const counter = Number.isFinite(Number(parsed.counter)) && Number(parsed.counter) >= 1 ? Math.floor(Number(parsed.counter)) : 1;
-        return { orders, counter };
-      } catch (err) { return fallback; }
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return { nextOrderNumber: 1, orders: [], totalSales: 0 };
     }
-
-    function getCustomers() {
-      try {
-        const raw = localStorage.getItem(CUSTOMERS_KEY);
-        return raw ? JSON.parse(raw) : [];
-      } catch (e) { return []; }
-    }
-
-    let activeCat = Object.keys(MENU)[0];
-    let cart = [];
-    let shiftData = loadShiftData();
 
     function saveShift() {
-      try { localStorage.setItem(SHIFT_KEY, JSON.stringify(shiftData)); } catch (err) {}
+      localStorage.setItem(SHIFT_KEY, JSON.stringify(shift));
     }
 
-    function renderTabs() {
-      const tabsEl = document.getElementById("tabs");
-      tabsEl.innerHTML = "";
-      Object.keys(MENU).forEach(cat => {
-        const b = document.createElement("button");
-        b.className = "tab" + (cat === activeCat ? " active" : "");
-        b.textContent = cat;
-        b.addEventListener("click", () => { activeCat = cat; renderTabs(); renderMenu(); });
-        tabsEl.appendChild(b);
-      });
+    function loadCustomers() {
+      try {
+        const raw = localStorage.getItem(CUSTOMERS_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
     }
 
-    function createAddButton(text, label, price) {
-      const btn = document.createElement("button");
-      btn.className = "add-btn";
-      btn.textContent = text;
-      btn.addEventListener("click", () => addItem(label, price));
-      return btn;
+    function saveCustomers() {
+      localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(customers));
+      renderCustomerDatalist();
+    }
+
+    function renderCustomerDatalist() {
+      const dl = document.getElementById("customersList");
+      dl.innerHTML = Object.keys(customers)
+        .map((phone) => `<option value="${phone}">${customers[phone]}</option>`)
+        .join("");
+    }
+
+    function lookupCustomer() {
+      const phone = document.getElementById("customerPhone").value.trim();
+      if (phone && customers[phone]) {
+        document.getElementById("customerName").value = customers[phone];
+      }
     }
 
     function renderMenu() {
       const grid = document.getElementById("menuGrid");
-      grid.innerHTML = "";
-      const isBeefBurger = activeCat === "برجر لحم";
-      MENU[activeCat].forEach(item => {
-        const card = document.createElement("div");
-        card.className = "item-card";
-        const titleEl = document.createElement("div");
-        titleEl.className = "item-name";
-        titleEl.textContent = item.name;
-        const sizeBtns = document.createElement("div");
-        sizeBtns.className = "size-btns";
-        const singleLabel = isBeefBurger ? `${item.name} (سنجل)` : item.name;
-        const singleBtnText = isBeefBurger ? `سنجل ${item.single} ج` : `${item.single} ج`;
-        sizeBtns.appendChild(createAddButton(singleBtnText, singleLabel, item.single));
-        if (typeof item.double === "number") {
-          sizeBtns.appendChild(createAddButton(`دبل ${item.double} ج`, `${item.name} (دبل)`, item.double));
-        }
-        card.appendChild(titleEl);
-        card.appendChild(sizeBtns);
-        grid.appendChild(card);
-      });
+      grid.innerHTML = MENU_ITEMS.map(
+        (item) => `
+          <button type="button" class="item-btn" onclick="addToCart('${item.id}')">
+            <span class="item-name">${item.name}</span>
+            <span class="item-price">${item.price} ج</span>
+          </button>
+        `
+      ).join("");
     }
 
-    function addItem(label, price) {
-      const safePrice = Number(price);
-      if (!Number.isFinite(safePrice) || safePrice < 0) return;
-      const found = cart.find(x => x.label === label && x.price === safePrice);
-      if (found) found.qty += 1;
-      else cart.push({ label, price: safePrice, qty: 1 });
+    function addToCart(itemId) {
+      const product = MENU_ITEMS.find((m) => m.id === itemId);
+      if (!product) return;
+      const existing = cart.find((c) => c.id === itemId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
       renderCart();
     }
 
-    function changeQty(idx, delta) {
-      if (!cart[idx]) return;
+    function changeQty(itemId, delta) {
+      const idx = cart.findIndex((c) => c.id === itemId);
+      if (idx === -1) return;
       cart[idx].qty += delta;
       if (cart[idx].qty <= 0) cart.splice(idx, 1);
       renderCart();
     }
 
-    function getTotal() {
-      return cart.reduce((sum, x) => sum + Number(x.price) * Number(x.qty), 0);
+    function clearCart() {
+      cart = [];
+      renderCart();
+    }
+
+    function getCartTotal() {
+      return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
     }
 
     function renderCart() {
-      document.getElementById("orderNum").textContent = shiftData.counter;
-      const list = document.getElementById("orderList");
-      if (!cart.length) {
-        list.innerHTML = '<div style="color:#aaa; text-align:center; padding:20px;">لم يتم إضافة أصناف بعد</div>';
+      const list = document.getElementById("cartList");
+      if (cart.length === 0) {
+        list.innerHTML = '<li style="color:#888; padding:10px 0;">السلة فارغة</li>';
       } else {
-        list.innerHTML = cart.map((x, i) => `
-          <div class="order-row">
-            <div><strong>${escapeHtml(x.label)}</strong><br><small>${x.price} ج × ${x.qty} = ${x.price * x.qty} ج</small></div>
-            <div class="qty-ctrl">
-              <button onclick="changeQty(${i}, -1)">-</button>
-              <span style="margin:0 6px;">${x.qty}</span>
-              <button onclick="changeQty(${i}, 1)">+</button>
-            </div>
-          </div>
-        `).join("");
+        list.innerHTML = cart
+          .map(
+            (item) => `
+              <li class="cart-row">
+                <div>
+                  <strong>${item.name}</strong><br />
+                  <small style="color:#bbb;">${item.price} ج × ${item.qty} = ${item.price * item.qty} ج</small>
+                </div>
+                <div class="qty-controls no-print">
+                  <button type="button" class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
+                  <span>${item.qty}</span>
+                  <button type="button" class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+                </div>
+              </li>
+            `
+          )
+          .join("");
       }
-      document.getElementById("totalAmount").textContent = getTotal();
-      calcChange();
-    }
-
-    function calcChange() {
-      const rawPaid = Number(document.getElementById("paidAmount").value);
-      const paid = Number.isFinite(rawPaid) && rawPaid > 0 ? rawPaid : 0;
-      const total = getTotal();
-      const diff = paid > 0 ? Math.max(0, paid - total) : 0;
-      document.getElementById("changeAmount").textContent = diff;
-    }
-
-    function clearOrder() {
-      cart = [];
-      document.getElementById("customerNote").value = "";
-      document.getElementById("paidAmount").value = "";
-      renderCart();
-    }
-
-    function clearCustomerInputs() {
-      document.getElementById("customerName").value = "";
-      document.getElementById("customerPhone").value = "";
-    }
-
-    function saveCustomer() {
-      const name = document.getElementById("customerName").value.trim();
-      const phone = (document.getElementById("customerPhone").value || "").replace(/\s+/g, "").trim();
-      if (!name || !phone) return alert("يرجى إدخال الاسم ورقم الهاتف.");
-      const customers = getCustomers();
-      const existingIdx = customers.findIndex(c => c.phone === phone);
-      if (existingIdx !== -1) {
-        customers[existingIdx].name = name;
-      } else {
-        customers.unshift({ id: Date.now().toString(), name, phone });
-      }
-      localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(customers));
-      filterCustomers();
-      alert("تم حفظ بيانات العميل.");
-    }
-
-    function filterCustomers() {
-      const query = document.getElementById("customerSearch").value.trim().toLowerCase();
-      const listEl = document.getElementById("customersList");
-      const customers = getCustomers();
-      const filtered = customers.filter(c => c.name.toLowerCase().includes(query) || c.phone.includes(query));
-      listEl.innerHTML = filtered.map(c => `
-        <li class="customer-item">
-          <span style="cursor:pointer;" onclick="selectCustomer('${escapeHtml(c.name)}', '${c.phone}')">
-            ${escapeHtml(c.name)} — ${c.phone}
-          </span>
-          <button style="background:#882222; border:none; color:#fff; border-radius:3px; cursor:pointer;" onclick="deleteCustomer('${c.id}')">حذف</button>
-        </li>
-      `).join("") || '<li style="padding:6px; color:#888;">لا يوجد عملاء مطابقون</li>';
-    }
-
-    function selectCustomer(name, phone) {
-      document.getElementById("customerName").value = name;
-      document.getElementById("customerPhone").value = phone;
-    }
-
-    function deleteCustomer(id) {
-      const customers = getCustomers().filter(c => c.id !== id);
-      localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(customers));
-      filterCustomers();
+      document.getElementById("cartTotal").textContent = `${getCartTotal()} ج`;
     }
 
     function completeOrder() {
-      if (!cart.length) return alert("أضف صنفاً واحداً على الأقل أولاً.");
-      const total = getTotal();
-      const note = document.getElementById("customerNote").value.trim();
-      const customerName = document.getElementById("customerName").value.trim() || "عميل نقدى";
-      const customerPhone = document.getElementById("customerPhone").value.trim() || "لا يوجد";
-      const time = new Date().toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
-      const currentOrderNum = shiftData.counter;
+      if (cart.length === 0) {
+        alert("أضف أصنافاً للطلب أولاً.");
+        return;
+      }
+      const total = getCartTotal();
+      const phone = document.getElementById("customerPhone").value.trim();
+      const name = document.getElementById("customerName").value.trim();
 
-      shiftData.orders.push({
-        num: currentOrderNum,
-        time,
-        note,
-        customerName,
-        customerPhone,
+      if (phone && name) {
+        customers[phone] = name;
+        saveCustomers();
+      }
+
+      const order = {
+        orderNumber: shift.nextOrderNumber,
+        customerName: name || "عميل نقدي",
+        customerPhone: phone || "-",
+        items: cart.map((i) => ({ name: i.name, qty: i.qty, price: i.price })),
         total,
-        items: cart.map(x => `${x.qty}× ${x.label}`)
-      });
-      shiftData.counter = currentOrderNum + 1;
+        time: new Date().toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" })
+      };
+
+      shift.orders.unshift(order);
+      shift.nextOrderNumber += 1;
+      shift.totalSales += total;
       saveShift();
-      alert(`تم حفظ الطلب #${currentOrderNum} بإجمالي ${total} ج`);
-      clearOrder();
-      clearCustomerInputs();
-      renderCart();
-      renderReport();
-    }
 
-    function renderReport() {
-      const box = document.getElementById("reportBox");
-      const sum = shiftData.orders.reduce((s, o) => s + Number(o.total || 0), 0);
-      box.innerHTML = `
-        <strong>ملخص الوردية:</strong> عدد الطلبات: ${shiftData.orders.length} | إجمالي المبيعات: <strong>${sum} ج</strong>
-        <hr style="border-color:#333;">
-        ${shiftData.orders.slice().reverse().map(o => `
-          <div style="margin-bottom:8px; border-bottom:1px dashed #333; padding-bottom:4px;">
-            <strong>#${escapeHtml(o.num)}</strong> (${escapeHtml(o.time)}) — <strong>${escapeHtml(o.total)} ج</strong><br>
-            <small style="color:#ffcc29;">العميل: ${escapeHtml(o.customerName)} (${escapeHtml(o.customerPhone)})</small>${o.note ? `<br><small>ملاحظة: <em>${escapeHtml(o.note)}</em></small>` : ""}<br>
-            <small style="color:#ccc;">${Array.isArray(o.items) ? o.items.map(item => escapeHtml(item)).join(" ، ") : ""}</small>
-          </div>
-        `).join("") || "لا توجد طلبات مسجلة في الوردية الحالية."}
-      `;
-    }
+      if (typeof recordOrderToMonth === "function") recordOrderToMonth(total);
 
-    function toggleReport() {
-      renderReport();
-      document.getElementById("reportBox").classList.toggle("show");
+      clearCart();
+      document.getElementById("customerPhone").value = "";
+      document.getElementById("customerName").value = "";
+
+      renderShiftStats();
+      renderOrdersLog();
+      window.print();
     }
 
     function resetShift() {
-      if (!confirm("هل تريد تصفير بيانات الوردية الحالية وبدء وردية جديدة من رقم 1؟")) return;
-      shiftData = { orders: [], counter: 1 };
+      if (!confirm("هل تريد بدء وردية جديدة وتصفير سجل الوردية الحالية؟")) return;
+      shift = { nextOrderNumber: 1, orders: [], totalSales: 0 };
       saveShift();
-      renderCart();
-      renderReport();
+      renderShiftStats();
+      renderOrdersLog();
     }
 
-    renderTabs();
+    function renderShiftStats() {
+      document.getElementById("nextOrderNo").textContent = shift.nextOrderNumber;
+      document.getElementById("shiftOrdersCount").textContent = shift.orders.length;
+      document.getElementById("shiftTotal").textContent = shift.totalSales;
+    }
+
+    function renderOrdersLog() {
+      const log = document.getElementById("ordersLog");
+      if (shift.orders.length === 0) {
+        log.innerHTML = '<div style="color:#888;">لا توجد طلبات في الوردية الحالية.</div>';
+        return;
+      }
+      log.innerHTML = shift.orders
+        .map(
+          (o) => `
+            <div class="order-entry">
+              <div>
+                <strong>#${o.orderNumber}</strong> — ${o.customerName} (${o.time})
+              </div>
+              <strong style="color:#4ade80;">${o.total} ج</strong>
+            </div>
+          `
+        )
+        .join("");
+    }
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+
     renderMenu();
     renderCart();
-    filterCustomers();
+    renderCustomerDatalist();
+    renderShiftStats();
+    renderOrdersLog();
   </script>
   <script src="./auth-monthly.js"></script>
 </body>
-  <!-- شاشة تسجيل الدخول وقفل الكاشير -->
-<div id="hamborghini-login-overlay" style="position:fixed; inset:0; background:#111; z-index:99999; display:flex; align-items:center; justify-content:center; padding:16px; direction:rtl; font-family:Tahoma, Arial, sans-serif;">
-  <div style="background:#1e1e1e; border:2px solid #f5b700; border-radius:14px; padding:24px; width:100%; max-width:380px; color:#fff; text-align:center;">
-    <h2 style="margin:0 0 6px; color:#ffcc29;">Hamborghini POS</h2>
-    <p style="margin:0 0 18px; color:#bbb; font-size:13px;">سجل الدخول لفتح شاشة الكاشير</p>
-
-    <input id="loginUser" type="text" placeholder="اسم المستخدم (User)" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #444; background:#141414; color:#fff; box-sizing:border-box;">
-    <input id="loginPass" type="password" placeholder="كلمة المرور (Password)" style="width:100%; padding:10px; margin-bottom:12px; border-radius:8px; border:1px solid #444; background:#141414; color:#fff; box-sizing:border-box;">
-
-    <div id="loginError" style="color:#ff6b6b; font-size:13px; margin-bottom:10px; display:none;">بيانات الدخول غير صحيحة</div>
-
-    <button type="button" onclick="hamborghiniLogin()" style="width:100%; padding:11px; background:#f5b700; color:#111; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">دخول الكاشير</button>
-  </div>
-</div>
-
-<!-- شريط مصغر لقفل الشاشة وعرض سجل الشهور -->
-<div class="no-print" style="background:#1a1a1a; border-bottom:1px solid #333; padding:8px 16px; display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; align-items:center; direction:rtl;">
-  <div style="display:flex; gap:8px; flex-wrap:wrap;">
-    <button type="button" onclick="toggleMonthlyModal()" style="background:#262626; color:#ffcc29; border:1px solid #f5b700; padding:6px 12px; border-radius:7px; cursor:pointer; font-weight:bold;">سجل المبيعات الشهري</button>
-    <button type="button" onclick="openChangeCredentials()" style="background:#262626; color:#fff; border:1px solid #555; padding:6px 12px; border-radius:7px; cursor:pointer;">تغيير اليوزر والباسورد</button>
-  </div>
-  <button type="button" onclick="hamborghiniLock()" style="background:#9e2a2b; color:#fff; border:none; padding:6px 14px; border-radius:7px; cursor:pointer; font-weight:bold;">قفل الكاشير 🔒</button>
-</div>
-
-<!-- نافذة عرض المبيعات الشهرية -->
-<div id="monthlySalesModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:99998; align-items:center; justify-content:center; padding:16px; direction:rtl;">
-  <div style="background:#1e1e1e; border:1px solid #f5b700; border-radius:12px; padding:18px; width:100%; max-width:520px; max-height:80vh; overflow-y:auto; color:#fff;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="margin:0; color:#ffcc29;">ذاكرة المبيعات لكل شهر</h3>
-      <button type="button" onclick="toggleMonthlyModal()" style="background:#333; color:#fff; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">إغلاق</button>
-    </div>
-    <div id="monthlySalesContent"></div>
-  </div>
-</div>
 </html>
